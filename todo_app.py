@@ -1,5 +1,5 @@
 # imports
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -28,3 +28,18 @@ db.create_all()
 @app.route('/')
 def index():
     return render_template('index.html', data = Todo.query.all())
+
+
+# Todo item create root handler
+@app.route('/todos/create', methods=['POST'])
+def createItem():
+    # extract the form input for the new Todo item
+    todoItemData = request.form.get('description')
+
+    # create new record in the database
+    newTodoItem = Todo(description = todoItemData)
+    db.session.add(newTodoItem)
+    db.session.commit()
+
+    # return the updated view to the user
+    return redirect(url_for('index'))

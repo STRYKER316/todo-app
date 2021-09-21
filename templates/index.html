@@ -6,11 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todo App</title>
 </head>
+
 <body>
+    <!-- Form element for creating a Todo item -->
+    <form action="/todos/create" method="POST">
+        <label for="description">Add a new Todo item</label>
+        <br>
+        <input type="text" id="description" name="description" required>
+        <input type="submit" value="Create">
+    </form>
+
+    <!-- Display the Todo items -->
+    <div>
     <ul>
         {% for d in data %}
             <li>{{ d.description }}</li>
         {% endfor %}
     </ul>
+    </div>
 </body>
 </html>
