@@ -1,6 +1,7 @@
 # imports
 from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import sys
 
 
@@ -12,6 +13,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # create an instance of the SQLAlchemy class and link it to the app
 db = SQLAlchemy(app)
 
+# create an instance of the Migrate class to manage database schema migrations for our flask app
+migrate = Migrate(app, db)
+
 # data model for the app
 class Todo(db.Model):
     __tablename__ = 'todos'
@@ -20,9 +24,6 @@ class Todo(db.Model):
 
     def __repr__(self) -> str:
         return f"<id {self.id}: {self.description}>"
-
-# sync all the newly created data model to the databse
-db.create_all()
 
 
 # Root route handler

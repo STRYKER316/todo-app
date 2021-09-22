@@ -1,4 +1,4 @@
-/////  Add AJAX request feature to update the list items asynchronously  /////
+/********** Add AJAX request feature to update the list items asynchronously  **********/
 
 const descriptionInputElement = document.getElementById('description');
 // prevent deafualt form submission action and send a fetch request
