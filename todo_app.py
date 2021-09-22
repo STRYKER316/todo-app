@@ -1,6 +1,7 @@
 # imports
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
+import sys
 
 
 # create an app with the name of the current module, set its configs
@@ -33,15 +34,28 @@ def index():
 # Todo item create root handler
 @app.route('/todos/create', methods=['POST'])
 def createItem():
-    # get the input data fot the new Todo item coming as JSON
-    todoItemData = request.get_json()['description']
+    # inititate a response body, an error flag
+    body = {}
+    error = False
 
-    # create new record in the database
-    newTodoItem = Todo(description = todoItemData)
-    db.session.add(newTodoItem)
-    db.session.commit()
-
-    # return a JSON object as a response to the fetch routine
-    return jsonify({
-        'description': newTodoItem.description
-    })
+    try:
+        # get the input data for our new Todo item, which comes as JSON and fill out the responses body {}
+        todoItemData = request.get_json()['description']
+        body['description'] = todoItemData
+        # create new record in the database
+        newTodoItem = Todo(description = todoItemData)
+        db.session.add(newTodoItem)
+        db.session.commit()
+    except:
+        # if the transaction fails; update the error flag,rollback the db session and print out the error message
+        error = True
+        db.session.rollback()
+        print(sys.exc_info)
+    finally:
+        db.session.close()
+    
+    # handle the error, if there is any or else send response body {} back to the client view
+    if error:
+        abort(400)
+    else:
+        return jsonify(body)
