@@ -1,5 +1,5 @@
 # imports
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -33,13 +33,15 @@ def index():
 # Todo item create root handler
 @app.route('/todos/create', methods=['POST'])
 def createItem():
-    # extract the form input for the new Todo item
-    todoItemData = request.form.get('description')
+    # get the input data fot the new Todo item coming as JSON
+    todoItemData = request.get_json()['description']
 
     # create new record in the database
     newTodoItem = Todo(description = todoItemData)
     db.session.add(newTodoItem)
     db.session.commit()
 
-    # return the updated view to the user
-    return redirect(url_for('index'))
+    # return a JSON object as a response to the fetch routine
+    return jsonify({
+        'description': newTodoItem.description
+    })

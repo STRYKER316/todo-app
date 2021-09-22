@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todo App</title>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
+    <!-- Show an error message if something goes wrong -->
+    <div id="error" class="hidden">Something went wrong!</div>
+    
     <!-- Form element for creating a Todo item -->
-    <form action="/todos/create" method="POST">
+    <form action="/todos/create" method="POST" id="todo-form">
         <label for="description">Add a new Todo item</label>
         <br>
         <input type="text" id="description" name="description" required>
@@ -18,7 +27,7 @@
 
     <!-- Display the Todo items -->
     <div>
-    <ul>
+    <ul id="todo-list">
         {% for d in data %}
             <li>{{ d.description }}</li>
         {% endfor %}
@@ -27,4 +36,5 @@
 
     <script src="{{url_for('static', filename='app.js')}}" charset="utf-8"></script>
 </body>
+
 </html>
