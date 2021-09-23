@@ -33,7 +33,7 @@ def index():
     return render_template('index.html', data = Todo.query.all())
 
 
-# Todo item create root handler
+# Route handler for creating a new Todo item
 @app.route('/todos/create', methods=['POST'])
 def createItem():
     # inititate a response body, an error flag

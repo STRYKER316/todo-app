@@ -6,11 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todo App</title>
-    <style>
-        .hidden {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="static/app.css">
 </head>
 
 <body>
@@ -27,9 +23,9 @@
 
     <!-- Display the Todo items -->
     <div>
-    <ul id="todo-list">
+    <ul id="todo-list" class="unordered-list">
         {% for d in data %}
-            <li>{{ d.description }}</li>
+            <li><input type="checkbox">{{ d.description }}</li>
         {% endfor %}
     </ul>
     </div>
