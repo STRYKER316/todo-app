@@ -26,7 +26,7 @@ document.getElementById('todo-form').onsubmit = function(event) {
 
         // create a new <li> element for the new item and append it to the Todo list
         const liElement = document.createElement('li');
-        liElement.innerHTML = "<input type='checkbox'/>" + ' ' +  descriptionValue;
+        liElement.innerHTML = "<input type='checkbox'/>" + ' ' +  descriptionValue + "<button>&cross;</button>";
         document.getElementById('todo-list').appendChild(liElement)
     })
     .catch(function(err) {
