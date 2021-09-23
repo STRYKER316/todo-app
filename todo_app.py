@@ -30,7 +30,7 @@ class Todo(db.Model):
 # Root route handler
 @app.route('/')
 def index():
-    return render_template('index.html', data = Todo.query.all())
+    return render_template('index.html', todos = Todo.query.order_by('id').all())
 
 
 # Route handler for creating a new Todo item
@@ -61,3 +61,22 @@ def createItem():
         abort(400)
     else:
         return jsonify(body)
+
+
+# Route handler to set the completed state of a Todo item
+@app.route('/todos/<todo_id>/set-completed', methods = ['POST'])
+def setCompletedState(todo_id):
+    try:
+        # get the 'completedState' value for the checkbox
+        completedState = request.get_json()['checkboxState']
+        # get the To-do item by the id and update its state
+        todoItem = Todo.query.get(todo_id)
+        todoItem.completed = completedState
+        db.session.commit()
+    except:
+        print(sys.exc_info)
+        db.session.rollback()
+    finally:
+        db.session.close()
+
+    return redirect(url_for('index'))

@@ -24,8 +24,11 @@
     <!-- Display the Todo items -->
     <div>
     <ul id="todo-list" class="unordered-list">
-        {% for d in data %}
-            <li><input type="checkbox">{{ d.description }}</li>
+        {% for todo in todos %}
+            <li>
+                <input type="checkbox" class="check-box" data-id="{{todo.id}}" {% if todo.completed %} checked {% endif %}>
+                {{todo.description}}
+            </li>
         {% endfor %}
     </ul>
     </div>
