@@ -12,7 +12,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # create an instance of the SQLAlchemy class and link it to the app
 db = SQLAlchemy(app)
-
 # create an instance of the Migrate class to manage database schema migrations for our flask app
 migrate = Migrate(app, db)
 
@@ -41,13 +40,16 @@ def createItem():
     error = False
 
     try:
-        # get the input data for our new Todo item, which comes as JSON and fill out the responses body {}
+        # get the input data for our new Todo item, which comes as JSON and create a new To-do item
         todoItemData = request.get_json()['description']
-        body['description'] = todoItemData
-        # create new record in the database
         newTodoItem = Todo(description = todoItemData)
+        # commit the new To-do item to our database
         db.session.add(newTodoItem)
         db.session.commit()
+        # fill out the responses body {}
+        body['id'] = newTodoItem.id
+        body['description'] = newTodoItem.description
+        body['completed'] = newTodoItem.completed
     except:
         # if the transaction fails; update the error flag,rollback the db session and print out the error message
         error = True
@@ -64,13 +66,13 @@ def createItem():
 
 
 # Route handler to set the completed state of a Todo item
-@app.route('/todos/<todo_id>/set-completed', methods = ['POST'])
-def setCompletedState(todo_id):
+@app.route('/todos/set-completed/<todoId>', methods=['POST'])
+def setCompletedState(todoId):
     try:
         # get the 'completedState' value for the checkbox
         completedState = request.get_json()['checkboxState']
         # get the To-do item by the id and update its state
-        todoItem = Todo.query.get(todo_id)
+        todoItem = Todo.query.get(todoId)
         todoItem.completed = completedState
         db.session.commit()
     except:
@@ -80,3 +82,21 @@ def setCompletedState(todo_id):
         db.session.close()
 
     return redirect(url_for('index'))
+
+
+# Route handler to delete a To-do item
+@app.route('/todos/delete/<todoId>', methods=['DELETE'])
+def deleteTodoItem(todoId):
+    try:
+        # delete the To-do item with the provided id
+        todoItem = Todo.query.get(todoId)
+        db.session.delete(todoItem)
+        db.session.commit()
+    except:
+        print(sys.exc_info)
+        db.session.rollback()
+    finally:
+        db.session.close()
+
+    # return redirect(url_for('index'))
+    return jsonify({'success': True})

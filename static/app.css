@@ -2,7 +2,7 @@
     display: none;
 }
 
-.unordered-list {
+ul {
     list-style: none;
     padding: 0;
     width: 20%;
