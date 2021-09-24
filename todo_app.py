@@ -15,15 +15,27 @@ db = SQLAlchemy(app)
 # create an instance of the Migrate class to manage database schema migrations for our flask app
 migrate = Migrate(app, db)
 
-# data model for the app
+
+# To-do item data model for the app
 class Todo(db.Model):
     __tablename__ = 'todos'
     id = db.Column(db.Integer, primary_key = True)
     description = db.Column(db.String(), nullable = False)
     completed = db.Column(db.Boolean, nullable = False, default = False)
+    list_id = db.Column(db.Integer, db.ForeignKey('todolists.id'), nullable=False)
 
     def __repr__(self) -> str:
         return f"<id {self.id}: {self.description}>"
+
+# To-do List data model for the app
+class TodoList(db.Model):
+    __tablename__ = 'todolists'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(), nullable=False)
+    todos = db.relationship('Todo', backref='todoList', lazy=True)
+
+    def __repr__(self) -> str:
+        return f"<id {self.id}: {self.title}>"
 
 
 # Root route handler
