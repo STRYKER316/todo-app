@@ -81,7 +81,8 @@ def setCompletedState(todoId):
     finally:
         db.session.close()
 
-    return redirect(url_for('index'))
+    # return redirect(url_for('index'))
+    return jsonify({'success': True})
 
 
 # Route handler to delete a To-do item

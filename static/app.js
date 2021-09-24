@@ -20,9 +20,6 @@ document.getElementById('todo-form').onsubmit = function(event) {
     })
     .then(response => response.json())
     .then(jsonResoponse => {
-        // log the jsonResponse for debugging purposes
-        console.log("Response:", jsonResoponse);
-
         // create a new <li> element for the new To-do item
         const liElement = document.createElement('li');
         // create a new checkbox for the To-do item
@@ -50,19 +47,15 @@ document.getElementById('todo-form').onsubmit = function(event) {
 }
 
 
-/********** Updating the completed state of the To-do items **********/
+/********* Detect 'completed-state change' and 'deletion' of To-do items in our list **********/
 
-const checkboxes = document.querySelectorAll('.check-box');
-// loop through all the checkboxes to detect their state change
-for (let i = 0; i < checkboxes.length; ++i) {
-    const checkbox = checkboxes[i];
-    checkbox.onchange = function(event) {
-        console.log('Event', event);
-        // get the current 'checked' state and the id of the checkbox
-        const completedState = event.target.checked;
+const ulList = document.getElementById('todo-list');
+ulList.addEventListener('click', function(event) {
+    // event listener for completed-state update of the To-do item
+    if (event.target && event.target.nodeName === 'INPUT') {
+        // get the id and the current checked-state of To-do item to be deleted
         const todo_id = event.target.dataset['id'];
-        console.log(completedState, todo_id);
-
+        const completedState = event.target.checked;
         // make a fetch routine to update the completed state of the To-do item in our database
         fetch('/todos/set-completed/' + todo_id, {
             method: 'POST',
@@ -70,35 +63,80 @@ for (let i = 0; i < checkboxes.length; ++i) {
                 'checkboxState': completedState
             }),
             headers: {
-                'content-type' : 'application/json'
+                'content-type': 'application/json'
             }
         })
         .then( () => console.log("completed-state change successful"))
         .catch( () => document.getElementById('error').className = '')
     }
-}
 
-
-/**********  Deleting a To-do item **********/
-
-const delButtons = document.querySelectorAll('.delete-button');
-// loop through all the delete buttons to detect click events on them
-for (let j = 0; j < delButtons.length; ++j) {
-    const delButton = delButtons[j];
-    delButton.onclick = function(event) {
-        console.log("Event", event);
-
-        // get the id of the To-do item for which the delete button was clicked
+    // event listener for delete button of the To-do items
+    if (event.target && event.target.nodeName === 'BUTTON') {
+        // get the id of To-do item to be deleted
         const todo_id = event.target.dataset['id'];
-        // make a fetch routine to delete the To-do item
+        // make a fetch routine to delte the To-do item
         fetch('/todos/delete/' + todo_id, {
             method: 'DELETE'
         })
         .then( () => {
-            // on successful response, remove the To-do item from DOM
-            const item = event.target.parentElement;
-            item.remove();
+            // on successful response, remove the T0-do item from DOM
+            const todoItem = event.target.parentElement;
+            todoItem.remove()
         })
-        .catch(() => document.getElementById('error').className = '')
+        .catch( () => document.getElementById('error').className = '')
     }
-}
+})
+
+
+// /********** Updating the completed state of the To-do items **********/
+
+// const checkboxes = document.querySelectorAll('.check-box');
+// // loop through all the checkboxes to detect their state change
+// for (let i = 0; i < checkboxes.length; ++i) {
+//     const checkbox = checkboxes[i];
+//     checkbox.onchange = function(event) {
+//         console.log('Event', event);
+//         // get the current 'checked' state and the id of the checkbox
+//         const completedState = event.target.checked;
+//         const todo_id = event.target.dataset['id'];
+//         console.log(completedState, todo_id);
+
+//         // make a fetch routine to update the completed state of the To-do item in our database
+//         fetch('/todos/set-completed/' + todo_id, {
+//             method: 'POST',
+//             body: JSON.stringify({
+//                 'checkboxState': completedState
+//             }),
+//             headers: {
+//                 'content-type' : 'application/json'
+//             }
+//         })
+//         .then( () => console.log("completed-state change successful"))
+//         .catch( () => document.getElementById('error').className = '')
+//     }
+// }
+
+
+// /**********  Deleting a To-do item **********/
+
+// const delButtons = document.querySelectorAll('.delete-button');
+// // loop through all the delete buttons to detect click events on them
+// for (let j = 0; j < delButtons.length; ++j) {
+//     const delButton = delButtons[j];
+//     delButton.onclick = function(event) {
+//         console.log("Event", event);
+
+//         // get the id of the To-do item for which the delete button was clicked
+//         const todo_id = event.target.dataset['id'];
+//         // make a fetch routine to delete the To-do item
+//         fetch('/todos/delete/' + todo_id, {
+//             method: 'DELETE'
+//         })
+//         .then( () => {
+//             // on successful response, remove the To-do item from DOM
+//             const item = event.target.parentElement;
+//             item.remove();
+//         })
+//         .catch(() => document.getElementById('error').className = '')
+//     }
+// }
